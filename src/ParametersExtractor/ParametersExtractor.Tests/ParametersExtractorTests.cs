@@ -133,5 +133,29 @@ namespace ParametersExtractor.Tests
 
             Assert.Equal("+", parameters["Active"]);
         }
+
+        [Fact]
+        public void Test_10()
+        {
+            var parameters = CreateParametersExtractor(new User(false))
+                .ExtractBoolean(x => x.Active, onTrue: _ => "+")
+                .Result();
+
+            Assert.Single(parameters);
+
+            Assert.Equal(false, parameters["Active"]);
+        }
+
+        [Fact]
+        public void Test_11()
+        {
+            var parameters = CreateParametersExtractor(new User(false))
+                .ExtractBoolean("IsActive", x => x.Active, onFalse: _ => "+")
+                .Result();
+
+            Assert.Single(parameters);
+
+            Assert.Equal("+", parameters["IsActive"]);
+        }
     }
 }
