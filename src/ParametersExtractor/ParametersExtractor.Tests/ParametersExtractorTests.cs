@@ -17,7 +17,7 @@ namespace ParametersExtractor.Tests
         {
             var parameters = CreateParametersExtractor(new User(false))
                 .Extract(x => x.Age)
-                .Extract("MyAge", x => x.Age)
+                .ExtractAs("MyAge", x => x.Age)
                 .Result();
 
             Assert.Equal(02, parameters.Count);
@@ -31,7 +31,7 @@ namespace ParametersExtractor.Tests
         {
             var parameters = CreateParametersExtractor(new User(false))
                 .Extract(x => x.Role.Name)
-                .Extract("MyName", x => x.Role.Name)
+                .ExtractAs("MyName", x => x.Role.Name)
                 .Result();
 
             Assert.Equal(02, parameters.Count);
@@ -56,9 +56,9 @@ namespace ParametersExtractor.Tests
         public void Test_04()
         {
             var parameters = CreateParametersExtractor(new User(false))
-                .Extract(x => x.Role.Name, "Дмитрий")
+                .ExtractWithValue(x => x.Role.Name, "Дмитрий")
                 .Extract(x => x.Age, x => x.Age)
-                .Extract("Double Age", x => x.Age * 2)
+                .ExtractAs("Double Age", x => x.Age * 2)
                 .Result();
 
             Assert.Equal(03, parameters.Count);
@@ -73,7 +73,7 @@ namespace ParametersExtractor.Tests
         {
             var parameters = CreateParametersExtractor(new User(true))
                 .Extract(x => x.Active)
-                .Extract("MyActive", x => x.Active == false)
+                .ExtractAs("MyActive", x => x.Active == false)
                 .Result();
 
             Assert.Equal(02, parameters.Count);
@@ -112,8 +112,8 @@ namespace ParametersExtractor.Tests
         public void Test_08()
         {
             var parameters = CreateParametersExtractor(new User(false))
-                .ExtractBoolean(x => x.Active, onTrue: _ => "block", onFalse: _ => "none")
-                .ExtractBoolean("IsActive", _ => true, onTrue: _ => "block", onFalse: _ => "none")
+                .Extract(x => x.Active, onTrue: _ => "block", onFalse: _ => "none")
+                .ExtractAs("IsActive", _ => true, onTrue: _ => "block", onFalse: _ => "none")
                 .Result();
 
             Assert.Equal(2, parameters.Count);
@@ -126,7 +126,7 @@ namespace ParametersExtractor.Tests
         public void Test_09()
         {
             var parameters = CreateParametersExtractor(new User(false))
-                .ExtractBoolean(x => x.Active, onTrue: _ => "-", onFalse: _ => "+")
+                .Extract(x => x.Active, onTrue: _ => "-", onFalse: _ => "+")
                 .Result();
 
             Assert.Single(parameters);
@@ -138,7 +138,7 @@ namespace ParametersExtractor.Tests
         public void Test_10()
         {
             var parameters = CreateParametersExtractor(new User(false))
-                .ExtractBoolean(x => x.Active, onTrue: _ => "+")
+                .Extract(x => x.Active, onTrue: _ => "+")
                 .Result();
 
             Assert.Single(parameters);
@@ -150,7 +150,7 @@ namespace ParametersExtractor.Tests
         public void Test_11()
         {
             var parameters = CreateParametersExtractor(new User(false))
-                .ExtractBoolean("IsActive", x => x.Active, onFalse: _ => "+")
+                .ExtractAs("IsActive", x => x.Active, onFalse: _ => "+")
                 .Result();
 
             Assert.Single(parameters);

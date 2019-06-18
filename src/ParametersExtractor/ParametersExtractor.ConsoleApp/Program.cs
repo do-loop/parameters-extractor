@@ -18,13 +18,14 @@ namespace ParametersExtractor.ConsoleApp
             var user = new User(true);
 
             var paramters = new ParametersExtractor<User>(user)
-                .Extract("UserName", x => x.Name)
-                .Extract("ActiveMessage", GetMessage)
-                .Extract("UserAge", x => x.Age)
+                .ExtractAs("UserName", x => x.Name)
+                .ExtractAs("ActiveMessage", GetMessage)
+                .ExtractAs("UserAge", x => x.Age)
                 .Extract(x => x.BirthDate, x => x.BirthDate.Year)
-                .Extract("UserRole", x => x.Role.Name.ToUpper())
+                .ExtractAs("UserRole", x => x.Role.Name.ToUpper())
                 .Extract(x => x.Role.Level)
-                .ExtractBoolean(x => x.Active, onTrue: _ => "+", onFalse: _ => "-")
+                .Extract(x => x.Active, onTrue: _ => "+")
+                .ExtractWithValue(x => x.Name, "Виктор")
                 .Result();
 
             foreach (var parameter in paramters)

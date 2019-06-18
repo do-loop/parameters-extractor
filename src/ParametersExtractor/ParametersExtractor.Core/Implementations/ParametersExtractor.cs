@@ -15,23 +15,23 @@ namespace ParametersExtractor.Core.Implementations
             _object = @object;
         }
 
-        public IParametersExtractor<TObject> Extract<TParameter>(string name, Func<TObject, TParameter> function)
+        public IParametersExtractor<TObject> Extract<TParameter>(Expression<Func<TObject, TParameter>> expression)
+        {
+            var value = GetParameterValue(expression);
+
+            return value != null
+                ? ExtractWithValue(expression, value)
+                : this;
+        }
+
+        public IParametersExtractor<TObject> ExtractAs<TParameter>(string name, Func<TObject, TParameter> function)
         {
             _paramters[name] = function(_object);
 
             return this;
         }
 
-        public IParametersExtractor<TObject> Extract<TParameter>(Expression<Func<TObject, TParameter>> expression)
-        {
-            var value = GetParameterValue(expression);
-
-            return value != null
-                ? Extract(expression, value)
-                : this;
-        }
-
-        public IParametersExtractor<TObject> Extract<TParameter, TValue>(Expression<Func<TObject, TParameter>> expression, TValue value)
+        public IParametersExtractor<TObject> ExtractWithValue<TParameter, TValue>(Expression<Func<TObject, TParameter>> expression, TValue value)
         {
             var name = GetParameterName(expression);
 
@@ -47,10 +47,25 @@ namespace ParametersExtractor.Core.Implementations
             Expression<Func<TObject, TParameter>> expression,
             Func<TObject, TValue> function)
         {
-            return Extract(expression, function(_object));
+            return ExtractWithValue(expression, function(_object));
         }
 
-        public IParametersExtractor<TObject> ExtractBoolean<TValue>(
+        public IParametersExtractor<TObject> Extract<TValue>(
+            Expression<Func<TObject, bool>> expression,
+            Func<TObject, TValue> onTrue = null,
+            Func<TObject, TValue> onFalse = null)
+        {
+            var name = GetParameterName(expression);
+
+            if (string.IsNullOrWhiteSpace(name))
+                return this;
+
+            var value = (bool) GetParameterValue(expression);
+
+            return ExtractAs(name, _ => value, onTrue, onFalse);
+        }
+
+        public IParametersExtractor<TObject> ExtractAs<TValue>(
             string name,
             Func<TObject, bool> function,
             Func<TObject, TValue> onTrue = null,
@@ -72,21 +87,6 @@ namespace ParametersExtractor.Core.Implementations
             _paramters[name] = value;
 
             return this;
-        }
-
-        public IParametersExtractor<TObject> ExtractBoolean<TValue>(
-            Expression<Func<TObject, bool>> expression,
-            Func<TObject, TValue> onTrue = null,
-            Func<TObject, TValue> onFalse = null)
-        {
-            var name = GetParameterName(expression);
-
-            if (string.IsNullOrWhiteSpace(name))
-                return this;
-
-            var value = (bool) GetParameterValue(expression);
-
-            return ExtractBoolean(name, _ => value, onTrue, onFalse);
         }
 
         public Dictionary<string, object> Result() => _paramters;
