@@ -1,13 +1,12 @@
 ﻿using ParametersExtractor.ConsoleApp.Models;
 using ParametersExtractor.Core;
-using ParametersExtractor.Core.Implementations;
 using Xunit;
 
 namespace ParametersExtractor.Tests
 {
     public sealed class ParametersExtractorTests
     {
-        private static IParametersExtractor<User> CreateParametersExtractor(User user)
+        private static ParametersExtractor<User> CreateParametersExtractor(User user)
         {
             return new ParametersExtractor<User>(user);
         }
@@ -56,7 +55,7 @@ namespace ParametersExtractor.Tests
         public void Test_04()
         {
             var parameters = CreateParametersExtractor(new User(false))
-                .ExtractWithValue(x => x.Role.Name, "Дмитрий")
+                .ExtractAsValue(x => x.Role.Name, "Дмитрий")
                 .Extract(x => x.Age, x => x.Age)
                 .ExtractAs("Double Age", x => x.Age * 2)
                 .Result();
@@ -156,6 +155,23 @@ namespace ParametersExtractor.Tests
             Assert.Single(parameters);
 
             Assert.Equal("+", parameters["IsActive"]);
+        }
+
+        [Fact]
+        public void Test_12()
+        {
+            var parameters = CreateParametersExtractor(new User(true))
+                .ExtractAs("IsActive", x => x.Active, onTrue: _ => "+")
+                .ExtractAsValue(x => x.BirthDate, "12/05/1998")
+                .ExtractAsEmpty(x => x.Name)
+                .Result();
+
+            Assert.Equal(03, parameters.Count);
+
+            Assert.Equal("+", parameters["IsActive"]);
+            Assert.Equal("12/05/1998", parameters["BirthDate"]);
+
+            Assert.Null(parameters["Name"]);
         }
     }
 }

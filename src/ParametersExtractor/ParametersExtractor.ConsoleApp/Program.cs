@@ -1,6 +1,6 @@
 ﻿using System;
 using ParametersExtractor.ConsoleApp.Models;
-using ParametersExtractor.Core.Implementations;
+using ParametersExtractor.Core;
 
 namespace ParametersExtractor.ConsoleApp
 {
@@ -25,7 +25,7 @@ namespace ParametersExtractor.ConsoleApp
                 .ExtractAs("UserRole", x => x.Role.Name.ToUpper())
                 .Extract(x => x.Role.Level)
                 .Extract(x => x.Active, onTrue: _ => "+")
-                .ExtractWithValue(x => x.Name, "Виктор")
+                .ExtractAsValue(x => x.Name, "Виктор")
                 .Result();
 
             foreach (var parameter in paramters)
