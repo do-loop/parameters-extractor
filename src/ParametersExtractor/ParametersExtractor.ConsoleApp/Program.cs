@@ -24,6 +24,7 @@ namespace ParametersExtractor.ConsoleApp
                 .Extract(x => x.BirthDate, x => x.BirthDate.Year)
                 .Extract("UserRole", x => x.Role.Name.ToUpper())
                 .Extract(x => x.Role.Level)
+                .ExtractBoolean(x => x.Active, onTrue: _ => "+", onFalse: _ => "-")
                 .Result();
 
             foreach (var parameter in paramters)

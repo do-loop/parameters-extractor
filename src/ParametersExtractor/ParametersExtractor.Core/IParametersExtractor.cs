@@ -14,6 +14,17 @@ namespace ParametersExtractor.Core
 
         IParametersExtractor<TObject> Extract<TParameter, TValue>(Expression<Func<TObject, TParameter>> expression, Func<TObject, TValue> function);
 
+        IParametersExtractor<TObject> ExtractBoolean<TValue>(
+            string name,
+            Func<TObject, bool> function,
+            Func<TObject, TValue> onTrue,
+            Func<TObject, TValue> onFalse);
+
+        IParametersExtractor<TObject> ExtractBoolean<TValue>(
+            Expression<Func<TObject, bool>> expression,
+            Func<TObject, TValue> onTrue,
+            Func<TObject, TValue> onFalse);
+
         Dictionary<string, object> Result();
     }
 }

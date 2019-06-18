@@ -51,6 +51,40 @@ namespace ParametersExtractor.Core.Implementations
             return Extract(expression, function(_object));
         }
 
+        public IParametersExtractor<TObject> ExtractBoolean<TValue>(
+            string name,
+            Func<TObject, bool> function,
+            Func<TObject, TValue> onTrue,
+            Func<TObject, TValue> onFalse)
+        {
+            var boolean = function(_object);
+
+            _paramters[name] = boolean
+                ? onTrue(_object)
+                : onFalse(_object);
+
+            return this;
+        }
+
+        public IParametersExtractor<TObject> ExtractBoolean<TValue>(
+            Expression<Func<TObject, bool>> expression,
+            Func<TObject, TValue> onTrue,
+            Func<TObject, TValue> onFalse)
+        {
+            var name = GetParameterName(expression);
+
+            if (string.IsNullOrWhiteSpace(name))
+                return this;
+
+            var boolean = (bool) GetParameterValue(expression);
+
+            _paramters[name] = boolean
+                ? onTrue(_object)
+                : onFalse(_object);
+
+            return this;
+        }
+
         public Dictionary<string, object> Result() => _paramters;
 
         private static string GetParameterName<TParameter>(Expression<Func<TObject, TParameter>> expression)
