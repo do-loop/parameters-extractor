@@ -8,7 +8,7 @@ namespace ParametersExtractor.Core
     {
         private readonly TObject _object;
 
-        private readonly Dictionary<string, object> _paramters = new Dictionary<string, object>();
+        private readonly Dictionary<string, object> _parameters = new Dictionary<string, object>();
 
         public ParametersExtractor(TObject @object)
         {
@@ -32,7 +32,7 @@ namespace ParametersExtractor.Core
         /// </summary>
         public ParametersExtractor<TObject> ExtractAs<TParameter>(string name, Func<TObject, TParameter> function)
         {
-            _paramters[name] = function(_object);
+            _parameters[name] = function(_object);
 
             return this;
         }
@@ -47,7 +47,7 @@ namespace ParametersExtractor.Core
             if (string.IsNullOrWhiteSpace(name))
                 return this;
 
-            _paramters[name] = null;
+            _parameters[name] = null;
 
             return this;
         }
@@ -62,7 +62,7 @@ namespace ParametersExtractor.Core
             if (string.IsNullOrWhiteSpace(name))
                 return this;
 
-            _paramters[name] = value;
+            _parameters[name] = value;
 
             return this;
         }
@@ -109,20 +109,20 @@ namespace ParametersExtractor.Core
             switch (value)
             {
                 case true when onTrue != null:
-                    _paramters[name] = onTrue(_object);
+                    _parameters[name] = onTrue(_object);
                     return this;
 
                 case false when onFalse != null:
-                    _paramters[name] = onFalse(_object);
+                    _parameters[name] = onFalse(_object);
                     return this;
             }
 
-            _paramters[name] = value;
+            _parameters[name] = value;
 
             return this;
         }
 
-        public Dictionary<string, object> Result() => _paramters;
+        public Dictionary<string, object> Result() => _parameters;
 
         private static string GetParameterName<TParameter>(Expression<Func<TObject, TParameter>> expression)
         {
